@@ -1,5 +1,5 @@
 import "./App.css";
-import { animate, motion } from "framer-motion";
+import { animate, delay, motion, useScroll } from "framer-motion";
 
 function App() {
   const gridContainerVariant = {
@@ -11,6 +11,19 @@ function App() {
       },
     },
   };
+  const svgContainerVariant = {
+    hidden: {
+      opacity: 0,
+      pathLength: 1,
+      fil: "rgba(252,211,77,0)",
+    },
+    visible: {
+      opacity: 1,
+      pathLength: 1,
+      fill: "rgba(252,211,77,0)",
+    },
+  };
+  const { scrollYProgress: completionProgress } = useScroll();
 
   const gridDivVariant = { hidden: { opacity: 0 }, show: { opacity: 1 } };
   return (
@@ -72,25 +85,76 @@ function App() {
                 color: "black",
               }}
               transition={{
-                bounceDamping:10,bounceStiffness:600
+                bounceDamping: 10,
+                bounceStiffness: 600,
               }}
               className="bg-emerald-400 w-1/2 py-4 rounded-lg text-white font-light tracking-wide"
             >
               Subscribe
             </motion.button>
           </motion.div>
+          {/* Dragable */}
           <motion.div
             variants={gridDivVariant}
             className="flex items-center justify-center rounded-lg aspect-square bg-slate-800 gap-10"
-          ></motion.div>
+          >
+            <motion.div
+              className="bg-orange-500 w-20 h-20 rounded-2xl"
+              drag
+              dragConstraints={{
+                top: -125,
+                left: 20,
+                right: 125,
+                bottom: 125,
+              }}
+              dragTransition={{
+                bounceDamping: 10,
+                bounceStiffness: 600,
+              }}
+            ></motion.div>
+          </motion.div>
+          {/* Scrollbar */}
           <motion.div
             variants={gridDivVariant}
             className="flex items-center justify-center rounded-lg aspect-square bg-slate-800 gap-10"
-          ></motion.div>
+          >
+            <motion.div className="bg-gray-50/20 aspect-square w-40 rounded-2xl">
+              <motion.div
+                className="bg-slate-300 w-full h-full origin-bottom rounded-2xl"
+                transition={{
+                  duration: 4,
+                  ease: "easeIn",
+                }}
+                style={{ scaleY: completionProgress }}
+              ></motion.div>
+            </motion.div>
+          </motion.div>
+
           <motion.div
             variants={gridDivVariant}
             className="flex items-center justify-center rounded-lg aspect-square bg-slate-800 gap-10"
-          ></motion.div>
+          >
+            <motion.svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              className="stroke-amber-500 w-1/2 stroke-[0.5]"
+            >
+              <motion.path
+                d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z"
+                variants={svgContainerVariant}
+                initial="hidden"
+                animate="visible"
+                transition={{
+                  fill: {
+                    duration: 2,
+                    ease: "easeIn",
+                    delay: 2,
+                    repeat: Infinity,
+                  },
+                }}
+              />
+            </motion.svg>
+          </motion.div>
         </motion.section>
       </div>
     </>
